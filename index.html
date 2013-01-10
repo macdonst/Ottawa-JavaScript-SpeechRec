@@ -1,0 +1,480 @@
+<!doctype html>
+<html lang="en">
+
+	<head>
+		<meta charset="utf-8">
+
+		<title>JavaScript Speech Recognition Applications</title>
+
+		<meta name="description" content="Create Web Apps that react to speech recognition commands">
+		<meta name="author" content="Simon MacDonald">
+
+		<meta name="apple-mobile-web-app-capable" content="yes" />
+		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+		<link rel="stylesheet" href="css/reveal.min.css">
+		<link rel="stylesheet" href="css/theme/simple.css" id="theme">
+
+		<!-- For syntax highlighting -->
+		<link rel="stylesheet" href="lib/css/zenburn.css">
+
+		<!-- Speech Bubbles -->
+		<link rel="stylesheet" href="css/bubble.css">
+
+		<!-- If the query includes 'print-pdf', use the PDF print sheet -->
+		<script>
+			document.write( '<link rel="stylesheet" href="css/print/' + ( window.location.search.match( /print-pdf/gi ) ? 'pdf' : 'paper' ) + '.css" type="text/css" media="print">' );
+		</script>
+		
+		<script src="speakClient.js"></script>
+		
+		<style type="text/css">
+.speechinput input {
+	cursor:pointer;
+	margin:auto;
+	margin:15px;
+	color:transparent;
+	background-color:transparent;
+	border:5px;
+	width:15px;
+	-webkit-transform: scale(4.0, 4.0);
+}
+		</style>
+
+		<!--[if lt IE 9]>
+		<script src="lib/js/html5shiv.js"></script>
+		<![endif]-->
+	</head>
+
+	<body>
+
+		<div class="reveal">
+
+			<!-- Any section element inside of this container is displayed as a slide -->
+			<div class="slides">
+
+				<section>
+					<h1>JavaScript Speech Recognition Applications</h1>
+					<h4>and maybe some other HTML5 goodness</h4>
+				</section>
+
+				<section>
+					<section data-state="whoami">
+					<h2 style="font-family:Courier">Who is this guy?</h2>
+					<p><a class="box" href="http://ibm.com">IBM'er</a></p>
+					<p><a class="box" data-state="bio-1" href="http://twitter.com/macdonst">@macdonst</a></p>
+					<p><a class="box" href="http://github.com/macdonst">macdonst on Github</a></p>
+					<p><a class="box" href="http://simonmacdonald.com">simonmacdonald.com</a></p>
+					<p><a class="box" href="http://phonegap.com">PhoneGap</a> core contributor</p>
+					<p>nutty about <a class="box" href="https://en.wikipedia.org/wiki/Speech_recognition">speech recognition</a></p>
+					</section>
+				</section>
+				
+				<section>
+				    <section>
+    					<h1>What is speech recognition?</h1>
+    				</section>
+				    <section>
+    					<h1>Speech recognition is the process of translating the spoken word into text.</h1>
+    				</section>
+    				<section>
+    				    <h2>The process of speech rec includes</h2>
+						<ol>
+							<li class="fragment">Record and digitize the audio data</li>
+							<li class="fragment">Split data into phonemes</li>
+							<li class="fragment">Apply the phonemes to the recognition model</li>
+							<li class="fragment">Analyze the results against the grammar</li>
+							<li class="fragment">Return a confidence weighted result</li>
+						</ol>
+    				</section>
+				    <section>
+    					<h1>Basically...</h1>
+    				</section>
+    				<section>
+	    				<img src="images/meme4369281721.jpg" width="800" height="528"/>
+		    		</section>
+				</section>
+
+			    <section>
+    				<h1>So how do we add speech rec to our web app?</h1>
+    			</section>
+
+			    <section>
+    				<h2>You may look at the W3C Speech Input Draft Specification</h2>
+    				<img src="images/awesome-face.png"/>
+    			</section>
+
+			    <section>
+    				<h2>but no one has implemented that draft</h2>
+    				<img src="images/sad-face.jpg"/>
+    			</section>
+												
+			    <section>
+    				<h2>Luckily Google proposed that spec and slipped some of it into Chrome. So, let's take a closer look.</h2>
+    			</section>
+
+				<section>
+				    <section>
+    				    <h2>We'll use an input tag with the speech attribute</h2>
+	    			    <br/>
+		    			<pre><code contenteditable>
+&lt;input id="speech" type="text" speech="speech" x-webkit-speech="x-webkit-speech" /&gt;
+			    		</code></pre>
+				    	Which looks like this:
+					    <div style="-webkit-transform: scale(3.0, 3.0);">
+        				<input id="speech" type="text" speech="speech" x-webkit-speech="x-webkit-speech"/>
+        				</div>
+        			</section>
+        			<section>
+        			    <h2>Note in Chrome you'll need to use the <b>x-webkit-speech</b> attribute</h2>
+        			</section>
+				</section>
+				
+				<section>
+				    <h1>So that's pretty cool...</h1>
+				</section>
+				
+				<section>
+				    <h1>...if taking dictation gets you going</h1>
+				    <img src="images/dictation.jpg"/>
+				</section>
+				
+				<section>
+				    <h1>But I want to do something more exciting with the result</h1>
+				</section>
+
+				<section>
+    				<section>
+			    	    <h2>and that's where <b>onspeechchange</b> comes in</h2>
+		    		    <br/>
+	    				<pre><code contenteditable>
+&lt;input id="speech" type="text" speech="speech" 
+ x-webkit-speech="x-webkit-speech"
+ onspeechchange="processResults();" 
+ onwebkitspeechchange="processResults();" /&gt;
+    					</code></pre>
+    					Which is called whenever a new speech result is returned
+        			</section>
+        			<section>
+        			    <h2>Note in Chrome you'll need to use the <b>onwebkitspeechchange</b> event handler</h2>
+        			</section>
+				</section>
+
+				<section>
+				    <h2>So let's do something trivial in our event handler</h2>
+				    <br/>
+					<pre><code contenteditable>
+function processResults() {
+    var echo = document.getElementById("echo");
+    alert(echo.value);
+}
+					</code></pre>
+					<div style="-webkit-transform: scale(3.0, 3.0);">
+                    <input id="echo" type="text" speech="speech" 
+                     x-webkit-speech="x-webkit-speech"
+                     onspeechchange="pr1()" 
+                     onwebkitspeechchange="pr1()" />
+                     </div>
+				</section>
+
+				<section>
+				<div id="ct">
+				    <h2>Okay let's do something a little less trivial</h2>
+				    <br/>
+					<pre><code contenteditable>function processResults() {
+    var result = document.getElementById("musictest").value;
+    var music = document.getElementById("music");
+    switch(result) {
+        case "jazz":
+            music.src="jazz.mp3";
+            music.play();
+            break;
+        case "rock":
+            music.src="rock.mp3";
+            music.play();
+            break;
+        case "stop":
+        default: 
+            music.pause();
+    }
+}
+					</code></pre>
+					<div style="-webkit-transform: scale(3.0, 3.0);">
+                    <input id="musictest" type="text" speech="speech" 
+                     x-webkit-speech="x-webkit-speech"
+                     onspeechchange="pr2()" 
+                     onwebkitspeechchange="pr2()" />
+                     </div>
+                </div>
+				</section>
+
+				<section>
+					<h1>Which seems much cooler to me</h1>
+				</section>
+				
+				<section>
+				    <h2>Let's ask the web a question</h2>
+					<div style="-webkit-transform: scale(3.0, 3.0);">
+                    <input id="askweb" type="text" speech="speech" 
+                     x-webkit-speech="x-webkit-speech"
+                     onspeechchange="pr3()" 
+                     onwebkitspeechchange="pr3()" />
+                     </div>
+                     <div id="answerweb">
+                        <p>
+                            <br/>
+                        </p>
+                     </div>
+				</section>
+
+				<section>
+					<h1>Works pretty good...</h1>
+					<h1 class="fragment">...but ugly!</h1>
+				</section>
+
+			    <section>
+				    <h1>Let's style the speech input tag with some CSS</h1>
+   				</section>
+   				
+			    <section>
+    				<pre><code contenteditable>&lt;div id="speechinput"&gt;
+&lt;input id="speech" type="text" speech="speech" 
+ x-webkit-speech="x-webkit-speech"
+ onspeechchange="processResults();" 
+ onwebkitspeechchange="processResults();" /&gt;
+&lt;/div id="speechinput"&gt;</code></pre>
+    					+
+    				<pre><code contenteditable>#speechinput input {
+	cursor:pointer;
+	margin:auto;
+	margin:15px;
+	color:transparent;
+	background-color:transparent;
+	border:5px;
+	width:15px;
+	-webkit-transform: scale(3.0, 3.0);
+}</code></pre>
+                    =
+				<div class="speechinput">
+                   <input type="text" speech="speech" 
+                    x-webkit-speech="x-webkit-speech"
+                    onspeechchange="pr3()" 
+                    onwebkitspeechchange="pr3()" />
+                </div>
+    			</section>
+
+			    <section>
+				    <h2>And we'll add some color using</h2>
+				    <br/>
+				    <p class="triangle-isosceles">Speech</p>
+				    <br/>
+				    <p class="triangle-right top">Bubbles</p>
+				    <br/>
+				    <a href="http://nicolasgallagher.com/pure-css-speech-bubbles/">Pure-CSS-Speech-Bubbles</a>
+				    by Nicholas Gallagher
+   				</section>
+
+			    <section>
+				    <h1>Then pull it all together!</h1>
+   				</section>
+
+			    <section style="top: -200px;">
+				<div class="speechinput">
+                   <input id="askweb2" type="text" speech="speech" 
+                    x-webkit-speech="x-webkit-speech"
+                    onspeechchange="pr4()" 
+                    onwebkitspeechchange="pr4()" />
+                </div>
+                <div id="answerweb2"/>
+   				</section>
+
+                <section>
+                    <h1>But wait, why am I using my eyes like a sucker</h1>
+                </section>
+
+                <section>
+                    <h2>We'll output the answer using</h2>
+                    <a href="https://github.com/kripken/speak.js">speak.js</a>
+                </section>
+
+			    <section style="top: -200px;">
+				<div class="speechinput">
+                   <input id="askweb3" type="text" speech="speech" 
+                    x-webkit-speech="x-webkit-speech"
+                    onspeechchange="pr5()" 
+                    onwebkitspeechchange="pr5()" />
+                </div>
+                <div id="answerweb3"/>
+   				</section>
+
+				<section>
+					<h1>THE END</h1>
+				</section>
+
+			</div>
+
+		</div>
+        <audio id="music" style="display: none"/>
+        
+		<script src="lib/js/head.min.js"></script>
+		<script src="js/reveal.min.js"></script>
+
+		<script>
+
+			// Full list of configuration options available here:
+			// https://github.com/hakimel/reveal.js#configuration
+			Reveal.initialize({
+				controls: true,
+				progress: true,
+				history: true,
+				center: true,
+
+				theme: Reveal.getQueryHash().theme, // available themes are in /css/theme
+				transition: Reveal.getQueryHash().transition || 'default', // default/cube/page/concave/zoom/linear/none
+
+				// Optional libraries used to extend on reveal.js
+				dependencies: [
+					{ src: 'lib/js/classList.js', condition: function() { return !document.body.classList; } },
+					{ src: 'plugin/markdown/showdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+					{ src: 'plugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } },
+					{ src: 'plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } }
+					// { src: 'plugin/remotes/remotes.js', async: true, condition: function() { return !!document.body.classList; } }
+				]
+			});
+
+            Reveal.addEventListener( 'slidechanged', function( event ) {
+                // event.previousSlide, event.currentSlide, event.indexh, event.indexv
+                console.log("prev = " + event.indexh);
+                if (event.indexh - 1 == 13) {
+                    var music = document.getElementById("music");
+                    music.pause();
+                }
+            } );
+            
+			function pr1() {
+			    var echo = document.getElementById("echo");
+			    alert(echo.value);
+			}
+
+function pr2() {
+    var result = document.getElementById("musictest").value;
+    console.log("resutl = " + result);
+    var music = document.getElementById("music");
+    switch(result) {
+        case "jazz":
+            console.log("jazz");
+            music.src="jazz.mp3";
+            music.play();
+            break;
+        case "rock":
+            console.log("rock");
+            music.src="rock.mp3";
+            music.play();
+            break;
+        case "stop":
+        default: 
+            console.log("stop");
+            music.pause();
+    }
+}
+
+function pr3() {
+    var searchTerm = document.getElementById("askweb").value;
+    var qDiv = document.getElementById("answerweb");
+    qDiv.innerHTML = qDiv.innerHTML + '<p>Q: ' + searchTerm + '</p>';
+    var request = new XMLHttpRequest();
+    request.open("GET", "http://api.wolframalpha.com/v2/query?input=" + searchTerm + "&appid=<INSERT WOLFRAM ALPHA KEY>");
+    request.onreadystatechange = function() {
+        if(request.readyState == 4) {
+            console.log("*"+request.responseText+"*");
+            var querySuccess = request.responseXML.getElementsByTagName("queryresult")[0].getAttributeNode("success").nodeValue;
+            if (querySuccess == "true") {
+                var results = request.responseXML.getElementsByTagName("pod");
+                for (i=0; i<results.length; i++) {
+                    if (results[i].getAttributeNode("primary") != null && results[i].getAttributeNode("primary").nodeValue == "true") {
+                        var res = results[i].getElementsByTagName("subpod")[0].getElementsByTagName("plaintext")[0].childNodes[0].nodeValue;
+                        res = res.replace(/\|/g, "");
+                        qDiv.innerHTML = qDiv.innerHTML + '<p>A: ' + res + '</p>';
+                        console.log(res);
+                        break;
+                    }
+                }
+            } else {
+                //displayQA("I'm sorry I didn't understand", 'triangle-right top');
+                console.log("I'm sorry I didn't understand");
+            }
+        }
+    }
+    console.log("asking wolfram alpha");
+    request.send();
+}
+
+function pr4() {
+    var searchTerm = document.getElementById("askweb2").value;
+    var qDiv = document.getElementById("answerweb2");
+    qDiv.innerHTML = qDiv.innerHTML + '<br/><p class="triangle-isosceles">' + searchTerm + '</p>';
+    var request = new XMLHttpRequest();
+    request.open("GET", "http://api.wolframalpha.com/v2/query?input=" + searchTerm + "&appid=<INSERT WOLFRAM ALPHA KEY>");
+    request.onreadystatechange = function() {
+        if(request.readyState == 4) {
+            console.log("*"+request.responseText+"*");
+            var querySuccess = request.responseXML.getElementsByTagName("queryresult")[0].getAttributeNode("success").nodeValue;
+            if (querySuccess == "true") {
+                var results = request.responseXML.getElementsByTagName("pod");
+                for (i=0; i<results.length; i++) {
+                    if (results[i].getAttributeNode("primary") != null && results[i].getAttributeNode("primary").nodeValue == "true") {
+                        var res = results[i].getElementsByTagName("subpod")[0].getElementsByTagName("plaintext")[0].childNodes[0].nodeValue;
+                        res = res.replace(/\|/g, "");
+                        qDiv.innerHTML = qDiv.innerHTML + '<br/><p class="triangle-right top">' + res + '</p>';
+                        console.log(res);
+                        break;
+                    }
+                }
+            } else {
+                //displayQA("I'm sorry I didn't understand", 'triangle-right top');
+                console.log("I'm sorry I didn't understand");
+            }
+        }
+    }
+    console.log("asking wolfram alpha");
+    request.send();
+}
+
+function pr5() {
+    var searchTerm = document.getElementById("askweb3").value;
+    var qDiv = document.getElementById("answerweb3");
+    qDiv.innerHTML = qDiv.innerHTML + '<br/><p class="triangle-isosceles">' + searchTerm + '</p>';
+    var request = new XMLHttpRequest();
+    request.open("GET", "http://api.wolframalpha.com/v2/query?input=" + searchTerm + "&appid=<INSERT WOLFRAM ALPHA KEY>");
+    request.onreadystatechange = function() {
+        if(request.readyState == 4) {
+            console.log("*"+request.responseText+"*");
+            var querySuccess = request.responseXML.getElementsByTagName("queryresult")[0].getAttributeNode("success").nodeValue;
+            if (querySuccess == "true") {
+                var results = request.responseXML.getElementsByTagName("pod");
+                for (i=0; i<results.length; i++) {
+                    if (results[i].getAttributeNode("primary") != null && results[i].getAttributeNode("primary").nodeValue == "true") {
+                        var res = results[i].getElementsByTagName("subpod")[0].getElementsByTagName("plaintext")[0].childNodes[0].nodeValue;
+                        res = res.replace(/\|/g, "");
+                        qDiv.innerHTML = qDiv.innerHTML + '<br/><p class="triangle-right top">' + res + '</p>';
+                        console.log("calling speak");
+                        speak(res);
+                        console.log(res);
+                        break;
+                    }
+                }
+            } else {
+                //displayQA("I'm sorry I didn't understand", 'triangle-right top');
+                console.log("I'm sorry I didn't understand");
+            }
+        }
+    }
+    console.log("asking wolfram alpha");
+    request.send();
+}
+		</script>
+        <div id="audio"></div>
+	</body>
+</html>
